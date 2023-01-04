@@ -5,6 +5,7 @@ import {
   getCategories,
   getCategory,
   updateCategory,
+  deleteCategory,
 } from '../controllers/category-controller';
 
 const router = express.Router();
@@ -29,5 +30,8 @@ router.put(
   body('name', 'Category name is required').trim().notEmpty().escape(),
   updateCategory
 );
+
+// DELETE request for deleting a category
+router.delete('/:id', param('id').exists().isMongoId(), deleteCategory);
 
 export default router;
