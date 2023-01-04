@@ -30,4 +30,26 @@ async function createCategory(req: Request, res: Response) {
   res.json(category);
 }
 
-export { getCategories, createCategory };
+async function getCategory(req: Request, res: Response) {
+  // Find validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { id } = req.params;
+
+  // Find category with provided id
+  const category = await Category.findById(id);
+
+  // Send 404 response if category with provided id doesn't exist
+  if (!category) {
+    return res
+      .status(404)
+      .json({ message: `Could not find category with id ${id}` });
+  }
+
+  res.json(category);
+}
+
+export { getCategories, createCategory, getCategory };
