@@ -83,4 +83,33 @@ async function updateCategory(req: Request, res: Response) {
   res.json(category);
 }
 
-export { getCategories, createCategory, getCategory, updateCategory };
+async function deleteCategory(req: Request, res: Response) {
+  // Find validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { id } = req.params;
+
+  // make sure category with provided id exists
+  const category = await Category.findById(id);
+
+  if (!category) {
+    res.status(404);
+    throw new Error(`Could not find category with id '${id}'`);
+  }
+
+  // delete category
+  await Category.deleteOne({ _id: id });
+
+  res.json({ id });
+}
+
+export {
+  getCategories,
+  createCategory,
+  getCategory,
+  updateCategory,
+  deleteCategory,
+};
