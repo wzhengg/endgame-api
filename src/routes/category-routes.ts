@@ -4,6 +4,7 @@ import {
   createCategory,
   getCategories,
   getCategory,
+  updateCategory,
 } from '../controllers/category-controller';
 
 const router = express.Router();
@@ -20,5 +21,13 @@ router.post(
 
 // GET request for a specific category
 router.get('/:id', param('id').exists().isMongoId(), getCategory);
+
+// PUT request for updating a category
+router.put(
+  '/:id',
+  param('id').exists().isMongoId(),
+  body('name', 'Category name is required').trim().notEmpty().escape(),
+  updateCategory
+);
 
 export default router;
