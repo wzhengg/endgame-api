@@ -22,7 +22,7 @@ async function createCategory(req: Request, res: Response) {
   // Throw error if category with provided name already exists
   if (category) {
     res.status(400);
-    throw new Error(`Category with name ${name} already exists`);
+    throw new Error(`Category with name '${name}' already exists`);
   }
 
   // Category doesn't exist, create it
@@ -44,9 +44,8 @@ async function getCategory(req: Request, res: Response) {
 
   // Send 404 response if category with provided id doesn't exist
   if (!category) {
-    return res
-      .status(404)
-      .json({ message: `Could not find category with id ${id}` });
+    res.status(404);
+    throw new Error(`Could not find category with id '${id}'`);
   }
 
   res.json(category);
@@ -68,7 +67,7 @@ async function updateCategory(req: Request, res: Response) {
   // Throw error if category with provided id doesn't exist
   if (!category) {
     res.status(404);
-    throw new Error(`Could not find category with id ${id}`);
+    throw new Error(`Could not find category with id '${id}'`);
   }
 
   // Throw error if category with provided name already exists
