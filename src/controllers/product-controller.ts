@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { body, param } from 'express-validator';
 import Product from '../models/product-model';
 import Category from '../models/category-model';
 
@@ -92,4 +93,31 @@ async function deleteProduct(req: Request, res: Response) {
   res.json({ id });
 }
 
-export { getProducts, createProduct, getProduct, updateProduct, deleteProduct };
+function paramValidation() {
+  return param('id').exists().isMongoId();
+}
+
+function bodyValidation() {
+  return [
+    body('name', 'Product name is required').trim().notEmpty().escape(),
+    body('price')
+      .trim()
+      .notEmpty()
+      .withMessage('Product price is required')
+      .isCurrency()
+      .withMessage('Product price must be valid')
+      .escape(),
+    body('category').notEmpty().isMongoId(),
+    body('images').trim().notEmpty().isURL().escape(),
+  ];
+}
+
+export {
+  getProducts,
+  createProduct,
+  getProduct,
+  updateProduct,
+  deleteProduct,
+  paramValidation,
+  bodyValidation,
+};
