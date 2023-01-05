@@ -5,6 +5,7 @@ import {
   createProduct,
   getProduct,
   updateProduct,
+  deleteProduct,
 } from '../controllers/product-controller';
 
 const router = express.Router();
@@ -47,5 +48,8 @@ router.put(
   body('images').trim().notEmpty().isURL().escape(),
   updateProduct
 );
+
+// DELETE request for deleting a product
+router.delete('/:id', param('id').exists().isMongoId(), deleteProduct);
 
 export default router;
