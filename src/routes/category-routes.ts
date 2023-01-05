@@ -1,5 +1,6 @@
 import express from 'express';
 import { body, param } from 'express-validator';
+import { validateRequest } from '../middleware/validation-middleware';
 import {
   createCategory,
   getCategories,
@@ -17,21 +18,33 @@ router.get('/', getCategories);
 router.post(
   '/',
   body('name', 'Category name is required').trim().notEmpty().escape(),
+  validateRequest,
   createCategory
 );
 
 // GET request for a specific category
-router.get('/:id', param('id').exists().isMongoId(), getCategory);
+router.get(
+  '/:id',
+  param('id').exists().isMongoId(),
+  validateRequest,
+  getCategory
+);
 
 // PUT request for updating a category
 router.put(
   '/:id',
   param('id').exists().isMongoId(),
   body('name', 'Category name is required').trim().notEmpty().escape(),
+  validateRequest,
   updateCategory
 );
 
 // DELETE request for deleting a category
-router.delete('/:id', param('id').exists().isMongoId(), deleteCategory);
+router.delete(
+  '/:id',
+  param('id').exists().isMongoId(),
+  validateRequest,
+  deleteCategory
+);
 
 export default router;
