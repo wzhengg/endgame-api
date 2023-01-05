@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
 import Product from '../models/product-model';
 import Category from '../models/category-model';
 
@@ -9,12 +8,6 @@ async function getProducts(req: Request, res: Response) {
 }
 
 async function createProduct(req: Request, res: Response) {
-  // Find validation errors
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
   // Find category with provided id
   const category = await Category.findById(req.body.category);
 
@@ -36,12 +29,6 @@ async function createProduct(req: Request, res: Response) {
 }
 
 async function getProduct(req: Request, res: Response) {
-  // Find validation errors
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
   const { id } = req.params;
 
   // Find product with provided id
@@ -57,12 +44,6 @@ async function getProduct(req: Request, res: Response) {
 }
 
 async function updateProduct(req: Request, res: Response) {
-  // Find validation errors
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
   const { id } = req.params;
 
   // Find product with provided id
@@ -94,12 +75,6 @@ async function updateProduct(req: Request, res: Response) {
 }
 
 async function deleteProduct(req: Request, res: Response) {
-  // Find validation errors
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
   const { id } = req.params;
 
   // Find product with provided id
