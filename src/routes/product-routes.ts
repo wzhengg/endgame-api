@@ -1,6 +1,10 @@
 import express from 'express';
-import { body } from 'express-validator';
-import { getProducts, createProduct } from '../controllers/product-controller';
+import { body, param } from 'express-validator';
+import {
+  getProducts,
+  createProduct,
+  getProduct,
+} from '../controllers/product-controller';
 
 const router = express.Router();
 
@@ -22,5 +26,8 @@ router.post(
   body('images').trim().notEmpty().isURL().escape(),
   createProduct
 );
+
+// GET request for a specific product
+router.get('/:id', param('id').exists().isMongoId(), getProduct);
 
 export default router;
