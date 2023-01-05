@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { validationResult } from 'express-validator';
 import Category from '../models/category-model';
 
 async function getCategories(req: Request, res: Response) {
@@ -8,12 +7,6 @@ async function getCategories(req: Request, res: Response) {
 }
 
 async function createCategory(req: Request, res: Response) {
-  // Find validation errors
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
   const { name } = req.body;
 
   // Try to find a category with the provided name
@@ -31,12 +24,6 @@ async function createCategory(req: Request, res: Response) {
 }
 
 async function getCategory(req: Request, res: Response) {
-  // Find validation errors
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
   const { id } = req.params;
 
   // Find category with provided id
@@ -52,12 +39,6 @@ async function getCategory(req: Request, res: Response) {
 }
 
 async function updateCategory(req: Request, res: Response) {
-  // Find validation errors
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
   const { id } = req.params;
   const { name } = req.body;
 
@@ -84,17 +65,12 @@ async function updateCategory(req: Request, res: Response) {
 }
 
 async function deleteCategory(req: Request, res: Response) {
-  // Find validation errors
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
   const { id } = req.params;
 
-  // make sure category with provided id exists
+  // Find category with provided id
   const category = await Category.findById(id);
 
+  // Throw error if category with provided id doesn't exist
   if (!category) {
     res.status(404);
     throw new Error(`Could not find category with id '${id}'`);
