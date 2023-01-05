@@ -35,4 +35,25 @@ async function createProduct(req: Request, res: Response) {
   res.json(product);
 }
 
-export { getProducts, createProduct };
+async function getProduct(req: Request, res: Response) {
+  // Find validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { id } = req.params;
+
+  // Find product with provided id
+  const product = await Product.findById(id);
+
+  // Send 404 response if product with provided id doesn't exist
+  if (!product) {
+    res.status(404);
+    throw new Error(`Could not find product with id '${id}'`);
+  }
+
+  res.json(product);
+}
+
+export { getProducts, createProduct, getProduct };
