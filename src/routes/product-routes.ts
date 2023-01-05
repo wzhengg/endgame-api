@@ -7,6 +7,8 @@ import {
   getProduct,
   updateProduct,
   deleteProduct,
+  paramValidation,
+  bodyValidation,
 } from '../controllers/product-controller';
 
 const router = express.Router();
@@ -15,54 +17,21 @@ const router = express.Router();
 router.get('/', getProducts);
 
 // POST request for creating a product
-router.post(
-  '/',
-  body('name', 'Product name is required').trim().notEmpty().escape(),
-  body('price')
-    .trim()
-    .notEmpty()
-    .withMessage('Product price is required')
-    .isCurrency()
-    .withMessage('Product price must be valid')
-    .escape(),
-  body('category').notEmpty().isMongoId(),
-  body('images').trim().notEmpty().isURL().escape(),
-  validateRequest,
-  createProduct
-);
+router.post('/', bodyValidation(), validateRequest, createProduct);
 
 // GET request for a specific product
-router.get(
-  '/:id',
-  param('id').exists().isMongoId(),
-  validateRequest,
-  getProduct
-);
+router.get('/:id', paramValidation(), validateRequest, getProduct);
 
 // PUT request for updating a product
 router.put(
   '/:id',
-  param('id').exists().isMongoId(),
-  body('name', 'Product name is required').trim().notEmpty().escape(),
-  body('price')
-    .trim()
-    .notEmpty()
-    .withMessage('Product price is required')
-    .isCurrency()
-    .withMessage('Product price must be valid')
-    .escape(),
-  body('category').notEmpty().isMongoId(),
-  body('images').trim().notEmpty().isURL().escape(),
+  paramValidation(),
+  bodyValidation(),
   validateRequest,
   updateProduct
 );
 
 // DELETE request for deleting a product
-router.delete(
-  '/:id',
-  param('id').exists().isMongoId(),
-  validateRequest,
-  deleteProduct
-);
+router.delete('/:id', paramValidation(), validateRequest, deleteProduct);
 
 export default router;
