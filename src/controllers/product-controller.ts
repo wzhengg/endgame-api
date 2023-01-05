@@ -93,4 +93,28 @@ async function updateProduct(req: Request, res: Response) {
   res.json(product);
 }
 
-export { getProducts, createProduct, getProduct, updateProduct };
+async function deleteProduct(req: Request, res: Response) {
+  // Find validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { id } = req.params;
+
+  // Find product with provided id
+  const product = await Product.findById(id);
+
+  // Send 404 response if product with provided id doesn't exist
+  if (!product) {
+    res.status(404);
+    throw new Error(`Could not find product with id '${id}'`);
+  }
+
+  // Delete product
+  await Product.deleteOne({ _id: id });
+
+  res.json({ id });
+}
+
+export { getProducts, createProduct, getProduct, updateProduct, deleteProduct };
