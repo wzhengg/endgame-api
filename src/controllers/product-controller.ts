@@ -56,4 +56,41 @@ async function getProduct(req: Request, res: Response) {
   res.json(product);
 }
 
-export { getProducts, createProduct, getProduct };
+async function updateProduct(req: Request, res: Response) {
+  // Find validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { id } = req.params;
+
+  // Find product with provided id
+  const product = await Product.findById(id);
+
+  // Send 404 response if product with provided id doesn't exist
+  if (!product) {
+    res.status(404);
+    throw new Error(`Could not find product with id '${id}'`);
+  }
+
+  // Find category with provided id
+  const category = await Category.findById(req.body.category);
+
+  // Send 404 response if category with provided id doesn't exist
+  if (!category) {
+    res.status(404);
+    throw new Error(`Could not find category with id '${req.body.category}'`);
+  }
+
+  // Update product
+  product.name = req.body.name;
+  product.price = req.body.price;
+  product.category = req.body.category;
+  product.images = [req.body.images];
+  await product.save();
+
+  res.json(product);
+}
+
+export { getProducts, createProduct, getProduct, updateProduct };
