@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { body } from 'express-validator';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import User from '../models/user-model';
 
 function generateToken(id: string) {
@@ -42,6 +43,36 @@ async function createUser(req: Request, res: Response) {
   });
 }
 
+async function loginUser(req: Request, res: Response) {
+  const { email, password } = req.body;
+
+  // Find a user with the provided email
+  const user = await User.findOne({ email });
+
+  // Send 400 response if user with provided email doesn't exist
+  if (!user) {
+    res.status(400);
+    throw new Error(`Could not find a user with email '${email}'`);
+  }
+
+  // Compare passwords
+  const isValidPassword = await bcrypt.compare(password, user.password);
+
+  // Send 400 response if password is wrong
+  if (!isValidPassword) {
+    res.status(400);
+    throw new Error('Wrong password');
+  }
+
+  res.json({
+    _id: user.id,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    email,
+    token: generateToken(user.id),
+  });
+}
+
 function bodyValidation() {
   return [
     body('first_name', 'First name is required').trim().notEmpty().escape(),
@@ -58,4 +89,4 @@ function bodyValidation() {
   ];
 }
 
-export { createUser, bodyValidation };
+export { createUser, loginUser, bodyValidation };
