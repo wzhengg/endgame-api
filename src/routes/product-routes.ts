@@ -1,5 +1,4 @@
 import express from 'express';
-import { body, param } from 'express-validator';
 import { validateRequest } from '../middleware/validation-middleware';
 import {
   getProducts,
