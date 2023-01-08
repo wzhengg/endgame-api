@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { body } from 'express-validator';
+import { body, header } from 'express-validator';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import User from '../models/user-model';
@@ -73,6 +73,34 @@ async function loginUser(req: Request, res: Response) {
   });
 }
 
+async function getMe(req: Request, res: Response) {
+  // Find user with id from request
+  const user = await User.findById(req.user!._id);
+
+  // Send 404 response if user with id not found
+  if (!user) {
+    res.status(404);
+    throw new Error(`Could not find user with id '${req.user!._id}'`);
+  }
+
+  res.json({
+    _id: user.id,
+    first_name: user.first_name,
+    last_name: user.last_name,
+    email: user.email,
+  });
+}
+
+const headerValidation = () => {
+  return header('authorization', 'Token is required')
+    .exists()
+    .custom((value) => {
+      const [bearer, token] = value.split(' ');
+      return bearer && token;
+    })
+    .withMessage("authorization value must have form 'Bearer <token>'");
+};
+
 function bodyValidation() {
   return [
     body('first_name', 'First name is required').trim().notEmpty().escape(),
@@ -89,4 +117,4 @@ function bodyValidation() {
   ];
 }
 
-export { createUser, loginUser, bodyValidation };
+export { createUser, loginUser, getMe, headerValidation, bodyValidation };
