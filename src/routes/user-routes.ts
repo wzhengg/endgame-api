@@ -4,8 +4,11 @@ import { validateRequest } from '../middleware/validation-middleware';
 import {
   createUser,
   loginUser,
+  getMe,
+  headerValidation,
   bodyValidation,
 } from '../controllers/user-controller';
+import { addUserToReq } from '../middleware/auth-middleware';
 
 const router = express.Router();
 
@@ -20,5 +23,8 @@ router.post(
   validateRequest,
   loginUser
 );
+
+// GET request for current user information
+router.get('/me', headerValidation(), validateRequest, addUserToReq, getMe);
 
 export default router;
